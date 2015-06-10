@@ -12,7 +12,7 @@ function tremulaInit(){
       if(!tremula.cache.endOfScrollFlag){
         tremula.cache.endOfScrollFlag = true;
         pageCtr++;
-        loadTest()
+        LoadRoms()
         console.log('Load more')
       }
     }
@@ -22,7 +22,14 @@ function tremulaInit(){
 
   return tremula;
 }
+function LoadRoms(){
+  dataUrl = "http://127.0.0.1:8888/roms/" + pageCtr
+  $.getJSON(dataUrl,function(res){
 
+    var rs = res.roms.filter(function(o,i){  return o.box_art != null });
+    tremula.appendData(rs,nesAdapter)
+  })
+}
 function loadTest(){
   dataUrl = "http://127.0.0.1:8080/roms/" + pageCtr
   $.getJSON(dataUrl,function(res){
@@ -30,39 +37,61 @@ function loadTest(){
     tremula.appendData(rs,nesAdapter)
   })
 }
+function applyBoxClick(){
+	$('.tremulaContainer').on('tremulaItemSelect',function(gestureEvt,domEvt){
+		// console.log(gestureEvt,domEvt)
+		var 
+		$e = $(domEvt.target);
+		t = $e.closest('.gridBox')[0];
+		if(t){
+			var data = $.data(t).model.model.data;
+		}
+		if(data){
+			console.log(data);
+			console.log("Starting", data.ID)
+			$.get("http://127.0.0.1:8888/start/"+data.ID)
+		}
+	})
+}
 window.loadTest = loadTest
+window.loadRoms = LoadRoms
 
 function nesAdapter(data, env){
   this.data = data
 
+console.log(data)
   this.isLastContentBlock   = data.isLastContentBlock||false;
   this.layoutType           = data.layoutType||'tremulaBlockItem';// ['tremulaInline' | 'tremulaBlockItem']
   this.noScaling            = data.noScaling||false;
   this.isFavorite           = data.isFavorite||false;
 
   this.auxClassList         = data.auxClassList||'';
-  this.template = this.data.template||('<img draggable="false" class="moneyShot" onload="imageLoaded(this)" src=""/> <div class="boxLabel">'+ data.sanitized_name +'</div>')
+  this.template = this.data.template||('<img draggable="false" class="moneyShot" onload="imageLoaded(this)" src=""/> <div class="boxLabel nesGame" data-id='+ data.md5 +'">'+ data.sanitized_name +'</div>')
 
-  if( data.box_arts[1] != undefined ){
-    this.imgUrl = data.box_arts[1].src
-    this.h = this.height = data.box_arts[1].height
-    this.w = this.width= data.box_arts[1].width
-  } else if(data.box_arts[0] != undefined){
-    this.imgUrl = data.box_arts[0].src
-    this.h = this.height = data.box_arts[0].height
-    this.w = this.width = data.box_arts[0].width
+  if( data.box_art[1] != undefined ){
+    this.imgUrl = data.box_art[1].src
+    this.h = this.height = data.box_art[1].height
+    this.w = this.width= data.box_art[1].width
+  } else if(data.box_art[0] != undefined){
+    this.imgUrl = data.box_art[0].src
+    this.h = this.height = data.box_art[0].height
+    this.w = this.width = data.box_art[0].width
   }else{
     console.log("NO data")
   }
 }
 
 
-pageCtr = 1
+pageCtr = 0
 
 $(document).ready(function(){
+  $(".nesGame").live("click", function(e){
+	  console.log("clicked", e)
+  })
   setTimeout(function(){
     window.tremula = tremulaInit();//does not need to be on the window -- implemented here for convienience.
-    loadTest()
+    LoadRoms()
+    applyBoxClick()
   },1000);
 });
 
@@ -181,7 +210,7 @@ function doScrollEvents(o){
     if(!tremula.cache.endOfScrollFlag){
       tremula.cache.endOfScrollFlag = true;
       pageCtr++;
-      loadTest();
+LoadRoms();
       console.log('END OF SCROLL!')
     }
   }

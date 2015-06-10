@@ -9,9 +9,9 @@ import (
 type RomFile struct {
 	common.Rom
 	ID         int
-	FullPath   string `json:"full_path", bson:"-"`
-	Identified bool   `json:"identified"`
-	BoxArt     []BoxArtDetail
+	FullPath   string         `json:"full_path", bson:"-"`
+	Identified bool           `json:"identified"`
+	BoxArt     []BoxArtDetail `json:"box_art"`
 }
 
 type BoxArtDetail struct {

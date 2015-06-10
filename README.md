@@ -1,4 +1,4 @@
-##### Romdex (rather Nesdex for now)
+### Romdex (rather Nesdex for now)
 
 Collection of tools to indentify and scrape rom information, only NES
 for now.
@@ -11,3 +11,12 @@ All code is work in progress.
   extra details via their API.
 * GoodApi: Serve the imported/scrapes result over an RESTful API
 * GoodFrontend: Combine all sources to build an emulator front-end
+
+#### Internal todo
+
+* Make complete index available
+* FSNotify scan for new files
+* Refactor
+
+
+* Emulator used https://github.com/fogleman/nes
