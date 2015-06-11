@@ -12,15 +12,16 @@ import (
 
 type RomDex struct {
 	Scraper
-	Host string
 }
+
+const RomDexHost = "http://localhost:8080"
 
 func (self *RomDex) foreignKey() string {
 	return "RomDex"
 }
 
 func (self *RomDex) UpdateRomFromApi(rom *common.Rom) *common.Rom {
-	url := fmt.Sprintf("http://localhost:8080/roms/md5/%s", rom.Md5)
+	url := fmt.Sprintf("%s/api/v1/roms/md5/%s", RomDexHost, rom.Md5)
 	log.Println("Grabbing URL:", url)
 	response, err := http.Get(url)
 	if err != nil {

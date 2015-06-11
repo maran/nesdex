@@ -89,7 +89,8 @@ func main() {
 	}
 
 	api.SetApp(router)
+	http.Handle("/api/v1/", http.StripPrefix("/api/v1", api.MakeHandler()))
 	log.Println("Server started and listening on %s", *listenPort)
-	log.Fatal(http.ListenAndServe(*listenPort, api.MakeHandler()))
+	log.Fatal(http.ListenAndServe(*listenPort, nil))
 
 }

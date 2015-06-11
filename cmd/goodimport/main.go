@@ -14,6 +14,7 @@ import (
 // http://en.wikipedia.org/wiki/GoodTools
 // http://wiki.thegamesdb.net/index.php/GetGame
 // http://thegamesdb.net/api/GetGame.php?exactname=Adventure%20Island&platform=Nintendo%20Entertainment%20System%20(NES)
+// TODO: Add tons of flags for more information
 var romsPath = flag.String("roms_path", "./roms", "path to the roms to import.")
 
 func main() {

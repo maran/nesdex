@@ -12,7 +12,7 @@ import (
 
 var romFolder = flag.String("romFolder", "roms", "Path to your rom folder")
 var configPath = flag.String("configPath", common.GetUserDir()+"/.config/goodfrontend", "Path to your config")
-var apiLocation = flag.String("apiLocation", "127.0.0.1:8888", "Path to scrape information from")
+var apiLocation = flag.String("apiLocation", "127.0.0.1:8888", "API Location to scrape information from")
 
 func main() {
 	flag.Parse()
