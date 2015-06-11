@@ -50,13 +50,20 @@ func (self *NesApi) getRoms(w rest.ResponseWriter, r *rest.Request) {
 func (self *NesApi) getRom(w rest.ResponseWriter, r *rest.Request) {
 	md5 := r.PathParam("md5")
 	var rom common.Rom
+	var romGroup common.RomGroup
+
 	err := self.db.RomCollection.Find(bson.M{"md5": md5}).One(&rom)
 	if err != nil {
 		log.Println("Error fetching Rom with md5", md5)
 		w.WriteJson(ErrorResponse{404, true, "Rom not found in database"})
-	} else {
-		w.WriteJson(rom)
+		return
 	}
+	log.Println("Looking for", rom.RomGroupId)
+	err = self.db.RomGroupCollection.Find(bson.M{"_id": rom.RomGroupId}).One(&romGroup)
+	if err != nil {
+		log.Println("No rom collection found", err)
+	}
+	w.WriteJson(common.RomResponse{Rom: rom, RomGroup: romGroup})
 }
 
 func main() {

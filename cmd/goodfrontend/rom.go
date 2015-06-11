@@ -23,11 +23,11 @@ type BoxArtDetail struct {
 func (self *RomFile) Identify() bool {
 	dex := scrapers.RomDex{}
 	log.Println("Scraping info for", self.Rom.Md5)
-	updatedRom := dex.UpdateRomFromApi(&self.Rom)
-	self.Rom = *updatedRom
+	romResponse := dex.UpdateRomFromApi(&self.Rom)
+	self.Rom = romResponse.Rom
 	log.Println("New info", self.Rom)
 
-	for _, art := range updatedRom.BoxArts {
+	for _, art := range romResponse.RomGroup.BoxArts {
 		self.BoxArt = append(self.BoxArt, BoxArtDetail{BoxArt: art})
 	}
 	return true

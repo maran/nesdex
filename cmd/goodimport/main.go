@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"github.com/maran/nesdex/common"
 	"log"
 	"path/filepath"
@@ -20,7 +19,7 @@ var romsPath = flag.String("roms_path", "./roms", "path to the roms to import.")
 func main() {
 	flag.Parse()
 
-	fmt.Println("Scanning", *romsPath)
+	log.Println("Scanning", *romsPath)
 	matches, err := filepath.Glob(*romsPath + "/*.nes")
 	db := common.NewDatabase()
 
@@ -35,43 +34,53 @@ func main() {
 
 	for _, filePath := range matches {
 		_, b := filepath.Split(filePath)
-		fmt.Println("Checking", b)
+		log.Println("Checking", b)
 		name := fullNameMatch.FindString(b)
 
 		// Remove trailer whitespace
 		name = name[0 : len(name)-1]
-		rom := common.NewRom(name)
-		//searchApi(name)
-		log.Println("Found", name, "variation")
-		rom.Md5 = common.CalcMd5(filePath)
+
+		romGroup := db.FindOrCreateGroup(name)
+		log.Println("Using Romgroup", name, "id", romGroup.Id)
+
+		md5 := common.CalcMd5(filePath)
+		rom := db.FindOrInitializeRom(md5)
+		rom.GoodName = name
 		rom.Name = b
+		rom.RomGroupId = romGroup.Id
+
+		log.Println("Analyzing", b)
+
+		log.Println(rom)
 
 		result := trnMatch.FindAllStringSubmatch(b, -1)
 		for _, res := range result {
-			fmt.Println("Trainer:", res[3])
+			log.Println("Trainer:", res[3])
 			rom.Trainer = true
 			rom.TrainerName = res[3]
 		}
 		result = parMatch.FindAllStringSubmatch(b, -1)
 		for _, res := range result {
+			found := false
 			if val, ok := common.CountriesMap[res[1]]; ok {
+				log.Println("Found country:", res[1])
+				found = true
 				rom.CountryId = val
 			}
 
 			switch string(res[1]) {
 			case "Hack":
-				fmt.Println("Unspecified hack")
+				log.Println("Unspecified hack")
 				rom.Hack = true
 			// Revisions
 			case "PRG0":
-				fmt.Println("Program Revision 0")
+				log.Println("Program Revision 0")
 			case "PRG1":
-				fmt.Println("Program Revision 1")
+				log.Println("Program Revision 1")
 			default:
-				found := false
 				// Check if the result includes the word Hack
 				if strings.Contains(res[1], "Hack") {
-					fmt.Println("Custom hack:", res[1])
+					log.Println("Custom hack:", res[1])
 					rom.Hack = true
 					rom.HackName = res[1]
 					found = true
@@ -80,52 +89,52 @@ func main() {
 				var mprMatch = regexp.MustCompile(`Mapper (\d*)`)
 				p := mprMatch.FindString(res[1])
 				if len(p) > 0 {
-					fmt.Println("Mapper:", p)
+					log.Println("Mapper:", p)
 					found = true
 				}
 				if found == false {
-					fmt.Println("Unprocessed:", res[1])
+					log.Println("Unprocessed:", res[1])
 				}
 			}
 		}
 		result = stdMatch.FindAllStringSubmatch(b, -1)
 		for _, res := range result {
-			fmt.Println(result)
+			log.Println(result)
 			switch string(res[1][0]) {
 			case "!":
-				fmt.Println("Verified")
+				log.Println("Verified")
 				rom.Verified = true
 			case "a":
-				fmt.Println("Alternative version")
+				log.Println("Alternative version")
 				rom.Alternative = true
 			case "b":
-				fmt.Println("Bad dump")
+				log.Println("Bad dump")
 				rom.BadDump = true
 			case "f":
-				fmt.Println("Fixed")
+				log.Println("Fixed")
 				rom.Fixed = true
 			case "h":
-				fmt.Println("Hacked")
+				log.Println("Hacked")
 				rom.Hack = true
 			case "o":
-				fmt.Println("Overdump")
+				log.Println("Overdump")
 				rom.Overdump = true
 			case "p":
-				fmt.Println("Pirated")
+				log.Println("Pirated")
 				rom.Pirated = true
 			case "t":
-				fmt.Println("Trainer")
+				log.Println("Trainer")
 				rom.Trainer = true
 			default:
 				if res[1] == "!p" {
-					fmt.Println("Best but waiting for dump")
+					log.Println("Best but waiting for dump")
 				} else {
-					fmt.Println("Unknown code", res[1])
+					log.Println("Unknown code", res[1])
 				}
 			}
 
 		}
-		fmt.Println("---------------------------------")
+		log.Println("---------------------------------")
 		db.PersistRom(rom)
 	}
 }

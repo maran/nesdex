@@ -47,8 +47,8 @@ func (self *GamesDb) foreignKey() string {
 	return "GamesDb"
 }
 
-func (self *GamesDb) UpdateRomFromApi(rom *common.Rom) *common.Rom {
-	name := url.QueryEscape(strings.Replace(rom.GoodName, " -", ":", -1))
+func (self *GamesDb) UpdateRomFromApi(rom *common.RomGroup) *common.RomGroup {
+	name := url.QueryEscape(strings.Replace(rom.Name, " -", ":", -1))
 	platform := url.QueryEscape("Nintendo Entertainment System (NES)")
 	url := fmt.Sprintf("http://thegamesdb.net/api/GetGame.php?exactname=%s&platform=%s", name, platform)
 	log.Println("Grabbing URL:", url)
@@ -86,15 +86,4 @@ func (self *GamesDb) UpdateRomFromApi(rom *common.Rom) *common.Rom {
 		}
 	}
 	return rom
-}
-func test() {
-	xmlFile, err := os.Open("test.xml")
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
-	}
-	defer xmlFile.Close()
-
-	//xmlData, err := ioutil.ReadFile("test.xml")
-	//	log.Panic("AD")
 }

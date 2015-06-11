@@ -20,7 +20,7 @@ func (self *RomDex) foreignKey() string {
 	return "RomDex"
 }
 
-func (self *RomDex) UpdateRomFromApi(rom *common.Rom) *common.Rom {
+func (self *RomDex) UpdateRomFromApi(rom *common.Rom) *common.RomResponse {
 	url := fmt.Sprintf("%s/api/v1/roms/md5/%s", RomDexHost, rom.Md5)
 	log.Println("Grabbing URL:", url)
 	response, err := http.Get(url)
@@ -35,12 +35,13 @@ func (self *RomDex) UpdateRomFromApi(rom *common.Rom) *common.Rom {
 			os.Exit(1)
 		}
 		log.Println(string(contents))
-		d := common.Rom{}
+		d := common.RomResponse{}
 		err = json.Unmarshal(contents, &d)
 		if err != nil {
 			log.Println("Error from RomDex")
 		}
 		return &d
 	}
-	return rom
+	/** Goodfrontend rom response changes **/
+	return &common.RomResponse{Rom: *rom}
 }
