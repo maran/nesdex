@@ -26,15 +26,8 @@ function LoadRoms(){
   dataUrl = "http://127.0.0.1:8888/roms/" + pageCtr
   $.getJSON(dataUrl,function(res){
 
-    var rs = res.roms.filter(function(o,i){  return o.box_art != null });
-    tremula.appendData(rs,nesAdapter)
-  })
-}
-function loadTest(){
-  dataUrl = "http://127.0.0.1:8080/roms/" + pageCtr
-  $.getJSON(dataUrl,function(res){
-    var rs = res.roms.filter(function(o,i){ return o.box_arts.length > 0});//filter out any with a really wide aspect ratio.
-    tremula.appendData(rs,nesAdapter)
+//    var rs = res.roms.filter(function(o,i){  return o.box_art != null });
+    tremula.appendData(res.roms,nesAdapter)
   })
 }
 function applyBoxClick(){
@@ -53,7 +46,6 @@ function applyBoxClick(){
 		}
 	})
 }
-window.loadTest = loadTest
 window.loadRoms = LoadRoms
 
 function nesAdapter(data, env){
@@ -68,16 +60,18 @@ console.log(data)
   this.auxClassList         = data.auxClassList||'';
   this.template = this.data.template||('<img draggable="false" class="moneyShot" onload="imageLoaded(this)" src=""/> <div class="boxLabel nesGame" data-id='+ data.md5 +'">'+ data.sanitized_name +'</div>')
 
-  if( data.box_art[1] != undefined ){
+  if( data.box_art && data.box_art[1] != undefined ){
     this.imgUrl = data.box_art[1].src
     this.h = this.height = data.box_art[1].height
     this.w = this.width= data.box_art[1].width
-  } else if(data.box_art[0] != undefined){
+  } else if(data.box_art && data.box_art[0] != undefined){
     this.imgUrl = data.box_art[0].src
     this.h = this.height = data.box_art[0].height
     this.w = this.width = data.box_art[0].width
   }else{
-    console.log("NO data")
+    this.imgUrl = "http://i.imgur.com/nQPpZnW.png"
+    this.h = this.height = 900
+    this.w = this.width = 654
   }
 }
 
