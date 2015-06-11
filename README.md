@@ -10,13 +10,16 @@ All code is work in progress.
 * Goodscrape: Scrape imported results with gamesdb data so we can lookup
   extra details via their API.
 * GoodApi: Serve the imported/scrapes result over an RESTful API
-* GoodFrontend: Combine all sources to build an emulator front-end
+* GoodFrontend: Combine all sources to build an emulator front-end launches fogleman/nes's emulator on click
 
-#### Internal todo
+#### Screenshot
 
-* Make complete index available
-* FSNotify scan for new files
-* Refactor
+![Screenshot of Alpha version](http://i.imgur.com/T0oOJyF.png)
 
 
-* Emulator used https://github.com/fogleman/nes
+#### Goals of the project
+
+1. Index all known (NES) roms and have all the information about them in a public accessible API
+2. Collect other meta-data (screenshots / cover art) from various sources and add this data to the API
+3. Have one API to rule them all so all frontends have access to this data
+4. Preserve history
