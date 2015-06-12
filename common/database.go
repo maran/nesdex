@@ -18,7 +18,7 @@ func NewDatabase() *Database {
 	importer := new(Database)
 	logout := log.New(os.Stdout, "[mGo]: ", log.Lshortfile)
 	mgo.SetLogger(logout)
-	mgo.SetDebug(true)
+	mgo.SetDebug(false)
 	session, err := mgo.Dial("mongodb://localhost")
 	db := "goodnes"
 
