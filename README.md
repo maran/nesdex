@@ -23,3 +23,9 @@ All code is work in progress.
 2. Collect other meta-data (screenshots / cover art) from various sources and add this data to the API
 3. Have one API to rule them all so all frontends have access to this data
 4. Preserve history
+
+#### Todo
+1. Add more misc information about dumps
+2. Find a way to group hacks of games with different names under their
+   parent rom
+3. Finish code
