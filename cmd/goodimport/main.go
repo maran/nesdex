@@ -27,6 +27,7 @@ func main() {
 	var parMatch = regexp.MustCompile(`\(([^\)]+)\)`)
 	var stdMatch = regexp.MustCompile(`\[([a-zA-Z*\d*!]*)\]`)
 	var trnMatch = regexp.MustCompile(`\[(T)(-|\+)(\w*\d?\.?\s?\w*)\]`)
+	var theMatch = regexp.MustCompile(`, The`)
 
 	if err != nil {
 		log.Fatal("Error", err)
@@ -39,6 +40,14 @@ func main() {
 
 		// Remove trailer whitespace
 		name = name[0 : len(name)-1]
+
+		// Remove GoodMerge added , The at the end of the name
+		if theMatch.MatchString(name) {
+			log.Println("[imp] Found ', The' in the name, mangling")
+			name = strings.Replace(name, ", The", "", 1)
+			name = "The " + name
+			log.Println("Result", name)
+		}
 
 		romGroup := db.FindOrCreateGroup(name)
 		log.Println("Using Romgroup", name, "id", romGroup.Id)
