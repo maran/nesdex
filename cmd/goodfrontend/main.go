@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/GeertJohan/go.rice"
 	"github.com/jinzhu/gorm"
 	"github.com/maran/nesdex/common"
 	_ "github.com/mattn/go-sqlite3"
@@ -27,7 +28,7 @@ func main() {
 	go api.Start()
 
 	// Server HTML/JS
-	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("./../../gui"))))
+	http.Handle("/", http.FileServer(rice.MustFindBox("gui").HTTPBox()))
 	log.Fatal(http.ListenAndServe(":8181", nil))
 }
 
